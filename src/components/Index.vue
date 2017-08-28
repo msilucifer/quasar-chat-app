@@ -1,6 +1,6 @@
 <template>
   <div id="body">
-    <s-chat slot="chat"></s-chat>
+    <s-chat :isOnline="false" slot="chat"></s-chat>
   </div>
 </template>
 
@@ -16,6 +16,8 @@ export default {
 
 <style>
 #body {
+  margin: 0;
+  width: 100%;
   height: 200vh;
 }
 </style>

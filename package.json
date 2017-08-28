@@ -14,7 +14,8 @@
     "quasar-extras": "0.x",
     "quasar-framework": "git+https://git@github.com/quasarframework/quasar-edge.git",
     "vue": "~2.3.0",
-    "vue-router": "^2.0.0"
+    "vue-router": "^2.0.0",
+    "vuelidate": "^0.5.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
