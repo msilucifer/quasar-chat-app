@@ -13,44 +13,47 @@
           SatTrack Rastreamento e Logística
         </q-toolbar-title>
       </q-toolbar>
-      <div
-        class="chat mobile-chat"
-        v-if="chatStatus"
-      >
-        <q-chat-message
+      <div v-if="chatStatus">
+        <div
+          class="chat mobile-chat"
           v-for="msg in messages"
           :key="msg"
-          :label="msg.label"
-          :sent="msg.sent"
-          :text-color="msg.textColor"
-          :bg-color="msg.bgColor"
-          :name="msg.name"
-          :avatar="msg.avatar"
-          :text="msg.text"
-          :stamp="msg.stamp"
-        />
-
-        <q-chat-message
-          name="Vladimir"
-          avatar="../statics/boy-avatar.png"
         >
-          <q-spinner-dots size="2rem" />
-        </q-chat-message>
+          <q-chat-message
+            :label="msg.label"
+            :sent="msg.sent"
+            :text-color="msg.textColor"
+            :bg-color="msg.bgColor"
+            :name="msg.name"
+            :avatar="msg.avatar"
+            :text="msg.text"
+            :stamp="msg.stamp"
+          />
+
+          <!-- <q-chat-message
+            name="Vladimir"
+            avatar="../statics/boy-avatar.png"
+          >
+            <q-spinner-dots size="2rem" />
+          </q-chat-message> -->
+        </div>
       </div>
       <div v-if="!chatStatus" class="chat status">
         <q-chat-message
-          name="Daniel Piva"
-          label="Offline"
-          :sent="false"
-          :text="['Hi, there, we\'re not online now ); but feel free to text us whenever you need. We will text you back as soon as we can!']"
-          text-color="black"
-          bg-color="grey"
-          avatar="../statics/boy-avatar.png"
-          :stamp="new Date().toString()"
+          v-for="(message, id) in sentWhenOffline"
+          :key="id"
+          :label="message.label"
+          :sent="message.sent"
+          :text-color="message.textColor"
+          :bg-color="message.bgColor"
+          :name="message.name"
+          :avatar="message.avatar"
+          :text="message.text"
+          :stamp="message.stamp"
           class="animate-scale"
         />
       </div>
-      <div class="inputs">
+      <div class="inputs" v-if="sentWhenOffline.length <= 2">
         <small class="caption">Info about you</small>
         <q-field>
           <q-input
@@ -80,48 +83,47 @@
             @focus="delayTouch($v.number)" 
           />
         </q-field>
-        <div>
-          <q-field
-            :error="$v.message.$error" 
-            error-label="Please, fill out your e-mail."
-          >
-            <q-input
-              type="textarea"
-              v-model="message"
-              float-label="What's your message?"
-              @focus="delayTouch($v.message)" 
-            />
-          </q-field>
-          <q-btn
-            loader
-            no-caps
-            ref="btn"
-            :color="btnState.submitBtn.color"
-            style="width: 100%; margin-top: 8px;"
-            @click="submit()"
-            :disabled="$v.$invalid"
-          >
-            Send
-            <q-icon
-              size="1.8em"
-              style="padding: 4px 8px"
-              :name="btnState.submitBtn.icon"
-            />
-            <span slot="loading">Sending...</span>
-          </q-btn>
-        </div>
       </div>
+      <div class="message fixed-bottom-right">
+        <q-field
+          :error="$v.message.$error" 
+          error-label="Please, fill out your e-mail."
+        >
+          <q-input
+            ref="message"
+            type="textarea"
+            v-model="message"
+            float-label="What's your message?"
+            @focus="hideChatBtn()"
+            @blur="showChatBtn()"
+          />
+        </q-field>
+        <q-btn
+          no-caps
+          ref="btn"
+          :color="btnState.submitBtn.color"
+          style="width: 100%; margin-top: 8px;"
+          @click="submit()"
+          @keydown.enter="submit()"
+          :disabled="btnState.submitBtn.status"
+        >
+          <span>{{ btnState.submitBtn.name }}</span>
+          <q-icon
+            size="1.8em"
+            style="padding: 4px 8px"
+            :name="btnState.submitBtn.icon"
+          />
+          <!-- <span slot="loading">Sending...</span> -->
+        </q-btn>
+      </div>
+      <div id="message"></div>
     </div>
     <div
-      v-if="popupStatus"
+      v-if="chatStatus && popup"
       class="fixed-bottom-right flex popup-status"     
     >
       <p>We're online, start chating!</p>
-      <q-btn
-        flat
-        @click="closePopupStatus()"
-        v-if="true"
-      >
+      <q-btn flat @click="closePopupStatus()">
         <q-icon name="close"/>
       </q-btn>
     </div>
@@ -129,13 +131,14 @@
       round
       color="primary"
       class="fixed-bottom-right animate-pop"
+      :class="classes.chatBtn"
       style="margin: 0 32px 32px 0"
-      @click="toggleChat"
+      @click="toggleChat()"
     >
       <q-icon
         :color="btnState.chatBtn.color"
         :name="btnState.chatBtn.icon"
-        :class="bindedClasses.chatBtnIcon"
+        :class="classes.chatBtnIcon"
       />
     </q-btn>
   </div>
@@ -157,10 +160,15 @@ import {
 } from 'quasar';
 
 
+import Vue from 'vue';
+import VueScrollTo from 'vue-scrollto';
+
 import { Vuelidate, validationMixin } from 'vuelidate';
 import { required, minLength, maxLength, email, between } from 'vuelidate/lib/validators';
 
 const touchMap = new WeakMap();
+
+Vue.use(VueScrollTo);
 
 export default {
   name: 's-chat',
@@ -191,13 +199,13 @@ export default {
   },
   data() {
     return {
-      name: '',
-      email: '',
-      phone: '',
-      message: '',
+      name: 'Daniel Piva',
+      email: 'imdanielpiva@gmail.com',
+      phone: 4384463775,
+      message: 'Esta é a minha mensagem',
       opened: false,
-      chatStatus: true,
-      popupStatus: true,
+      chatStatus: false,
+      popup: true,
       btnState: {
         chatBtn: {
           icon: 'chat',
@@ -205,12 +213,17 @@ export default {
         },
         submitBtn: {
           icon: 'send',
-          color: 'primary'
+          color: 'primary',
+          name: 'Send',
+          status: false
         }
       },
-      bindedClasses:{
+      classes:{
+        chatBtn: {
+          display: ''          
+        },
         chatBtnIcon: {
-          'animate-fade': false
+          'animate-fade': false,
         }
       },
       messages: [
@@ -233,6 +246,19 @@ export default {
           avatar: 'statics/linux-avatar.png',
           stamp: 'Yesterday at 13:50'
         }
+      ],
+      sentWhenOffline: [
+        {
+          label: 'Offline'
+        },
+        {
+          name: 'SatTrack',
+          text: ['Hi, there, we\'re not online now ); but feel free to text us whenever you need. We will text you back as soon as we can!'],
+          sent: false,
+          avatar: 'statics/boy-avatar.png',
+          stamp: 'Yesterday 13:34',
+          bgColor: 'grey'          
+        }
       ]
     }
   },
@@ -250,31 +276,76 @@ export default {
         }, 100) ;
       }
 
-      this.bindedClasses.chatBtnIcon['animate-fade'] = true;
+      this.classes.chatBtnIcon['animate-fade'] = true;
       this.opened = !this.opened;
 
       this.closePopupStatus();
+      this.hideChatBtn();
+      this.showChatBtn();
     },
-    submit(event, done) {
-      this.btnState.submitBtn.icon = "check";
-      this.btnState.submitBtn.color = "positive";
+    sendBtnToggle() {
+      let submitBtn = this.btnState.submitBtn;
+      if (this.message) {
+        submitBtn.icon = "check";
+        submitBtn.color = "positive";
+        submitBtn.name = 'Sent';
+        submitBtn.status = !submitBtn.status;
 
-      setTimeout(() => {
-        done();  
-      }, 300);
+        setTimeout(() => {
+          submitBtn.icon = "send";
+          submitBtn.color = "primary";
+          submitBtn.name = 'Send';
+          submitBtn.status = !submitBtn.status;
+        }, 500);
+      }
+    },
+    submit() {
+      console.log(this.message)
+      if (this.name && this.email && this.phone && this.message) {
+        this.sentWhenOffline.push({
+          name: 'You',
+          text: [this.message],
+          sent: true,
+          avatar: 'statics/boy-avatar.png',
+          stamp: 'Yesterday 13:34',
+        });
+        console.log(this.message)
+        this.message = '';
+
+        this.$scrollTo('#message', 1000, {
+          container: '#chat',
+          easing: 'ease-in',
+          offset: 20000
+        });
+        this.sendBtnToggle();
+      }
+
+      this.$refs.message.focus(); 
     },
     openPopupStatus() {
-      this.popupStatus = true;
+      return this.popup = true;
     },
     closePopupStatus() {
-      this.popupStatus = false;
+      return this.popup = false;
     },
     delayTouch($v) {
       $v.$reset();
+
       if (touchMap.has($v)) {
         clearTimeout(touchMap.get($v));
       }
-      touchMap.set($v, setTimeout($v.$touch, 5000));
+
+      touchMap.set($v, setTimeout($v.$touch, 7000));
+    },
+    hideChatBtn() {
+      if (this.$q.platform.is.mobile && this.opened) {
+        return this.classes.chatBtn.display = 'none';
+      }
+    },
+    showChatBtn() {
+      if (this.$q.platform.is.mobile && !this.opened) {
+        return this.classes.chatBtn.display = '';
+      }
     }
   },
   mixins: [ validationMixin ],
@@ -288,10 +359,10 @@ export default {
       maxLength: maxLength(11),
     },
     message: {
-      minLength: minLength(10),
+      minLength: minLength(6),
       required
     }
-  },
+  }
 }
 </script>
 
@@ -300,6 +371,7 @@ export default {
   margin-bottom: 112px;
   margin-right: 24px;
   width: 380px;
+  height: 600px;
   max-height: 70vh;
   overflow: auto;
   overflow-x: hidden;
@@ -310,11 +382,22 @@ export default {
 
 .chat {
   padding: 24px;
+  margin-bottom: 132px;
 }
 
 .inputs {
   padding: 24px;
+  margin-bottom: 132px;
   border-top: 1px solid #efefef;
+}
+
+.message {
+  width: 380px;
+  margin-right: 24px;
+  margin-bottom: 112px;
+  padding: 0 24px 24px 24px;
+  /* border-top: 1px solid #efefef; */
+  background: #ffffff;
 }
 
 .caption {
@@ -341,13 +424,18 @@ export default {
   margin-right: 6px !important;
 }
 
-@media (max-width: 1000px) {
+.display {
+  display: none;
+}
+
+@media (max-width: 768px) {
   #chat {
     margin: 0;
     width: 100%;
     max-width: 100%;
     min-width: 100%;
     min-height: 100vh;
+    max-height: 100vh;
     border-radius: 0;
   }
 
