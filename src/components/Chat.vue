@@ -29,7 +29,7 @@
             :stamp="message.stamp"
             class="animate-scale"
           />
-          <q-icon class="message-status message-status-right-side" name="done all"/>
+          <q-icon class="message-status message-status-right-side" name="done all"/ >
         </div>
 
         <q-chat-message
