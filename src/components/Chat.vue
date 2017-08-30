@@ -74,7 +74,7 @@
         </q-field>
         <q-field
           :error="$v.number.$error" 
-          error-label="Please, fill out your e-mail."
+          error-label="Please, fill out your phone number."
         >
           <q-input
             type="number"
@@ -87,7 +87,7 @@
       <div class="message fixed-bottom-right">
         <q-field
           :error="$v.message.$error" 
-          error-label="Please, fill out your e-mail."
+          error-label="Some error."
         >
           <q-input
             ref="message"
@@ -300,7 +300,6 @@ export default {
       }
     },
     submit() {
-      console.log(this.message)
       if (this.name && this.email && this.phone && this.message) {
         this.sentWhenOffline.push({
           name: 'You',
@@ -309,7 +308,18 @@ export default {
           avatar: 'statics/boy-avatar.png',
           stamp: 'Yesterday 13:34',
         });
-        console.log(this.message)
+
+        setTimeout(() => {
+          console.log('aqui')
+          this.sentWhenOffline.push({
+            name: 'SatTrack',
+            text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
+            sent: false,
+            avatar: 'statics/boy-avatar.png',
+            stamp: 'Yesterday 13:34',
+          });
+        }, 1000);
+
         this.message = '';
 
         this.$scrollTo('#message', 1000, {
@@ -371,8 +381,8 @@ export default {
   margin-bottom: 112px;
   margin-right: 24px;
   width: 380px;
-  height: 600px;
-  max-height: 70vh;
+  height: 720px;
+  max-height: 80vh;
   overflow: auto;
   overflow-x: hidden;
   border-radius: 0.4em;
@@ -387,14 +397,14 @@ export default {
 
 .inputs {
   padding: 24px;
-  margin-bottom: 132px;
+  margin-top: -172px;
   border-top: 1px solid #efefef;
 }
 
 .message {
-  width: 380px;
-  margin-right: 24px;
-  margin-bottom: 112px;
+  width: 372px;
+  margin-right: 28px;
+  margin-bottom: 114px;
   padding: 0 24px 24px 24px;
   /* border-top: 1px solid #efefef; */
   background: #ffffff;
