@@ -14,6 +14,7 @@ import Vue from 'vue';
 import Quasar from 'quasar';
 import router from './router';
 
+import store  from './modules/store';
 
 Vue.config.productionTip = false;
 
@@ -31,6 +32,7 @@ Quasar.start(() => {
   /* eslint-disable no-new */
   new Vue({
     el: '#q-app',
+    store,
     router,
     render: h => h(require('./App'))
   });

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="opened" id="chat" class="fixed-bottom-right animate-scale">
+    <div
+      v-if="opened"
+      id="chat"
+      class="fixed-bottom-right animate-scale">
       <q-toolbar
         v-if="$q.platform.is.mobile"
         style="z-index:10000000;"
@@ -28,20 +31,19 @@
             :text="message.text"
             :stamp="message.stamp"
             class="animate-scale"
-          />
-          <q-icon class="message-status message-status-right-side" name="done all"/ >
+          >
+          </q-chat-message>
         </div>
-
         <q-chat-message
-          v-if="isClientTyping"
-          :sent="true"
+          v-if="false"
+          :sent="false"
           text-color="black"
           bg-color="grey-"
           name="name"
-          avatar="statics/boy-avatar.png"
+          avatar="statics/me.png"
           class="animate-scale"
         >
-          <q-spinner-dots size="2em" />
+          <q-spinner-dots size="1.8em" />
         </q-chat-message>
         <q-chat-message
           v-if="isSupportTyping"
@@ -49,28 +51,33 @@
           text-color="black"
           bg-color="grey-"
           name="name"
-          avatar="statics/boy-avatar.png"
+          avatar="statics/me.png"
           class="animate-scale"
         >
           <q-spinner-dots size="2em" />
         </q-chat-message>
-        <div class="inputs" v-if="messages.length <= 2">
-          <small class="caption">Info about you</small>
+        <div
+          class="inputs"
+          v-if="messages.length <= 1"
+        >
+          <small class="caption">About you</small>
           <q-field>
             <q-input
               v-model="name"
               stack-label="How can I call you?"
+              @focus="showMessageInput()"
             />
           </q-field>
           <q-field
             :error="$v.email.$error" 
             error-label="Please, fill out your e-mail."
+            @focus="showMessageInput()"
           >
             <q-input
               type="email"
               v-model="email"
               stack-label="What's your best e-mail?"
-              @focus="delayTouch($v.email)"          
+              @focus="delayTouch($v.email), showMessageInput()"          
             />
           </q-field>
           <q-field
@@ -81,42 +88,51 @@
               type="number"
               v-model="phone"
               stack-label="What's your phone number?"
-              @focus="delayTouch($v.number)" 
+              @focus="delayTouch($v.number), showMessageInput()" 
             />
           </q-field>
         </div>
       </div>
       <div id="message" style="height: 1px"></div>
-      <div class="message fixed-bottom-right">
+      <div
+        class="message fixed-bottom-right"
+        v-if="!$q.platform.is.mobile || !isInputHided || $q.platform.is.desktop"
+      >
         <q-field
           :error="$v.message.$error" 
           error-label="Some error."
+          class="mobile-input"
         >
           <q-input
-            ref="message"
+            color="dark"
             type="textarea"
+            ref="message"
+            class="message-input"
             v-model="message"
             float-label="What's your message?"
-            @keyup.enter="submit"
+            @keyup.enter="submit()"
             @input="hideChatBtn(), whenClientIsTyping()"
             @blur="showChatBtn(), whenClientIsNotTyping()"
+            :after="[{ icon: 'send',handler() { submit() } }]"
           />
         </q-field>
         <q-btn
-          no-caps
+          v-if="false"        
           ref="btn"
-          :color="btnState.submitBtn.color"
+          class="mobile-btn"
+          no-caps
+          rounded
+          :color="elmsState.submitBtn.color"
           :class="classes.sendBtn"
           @click="submit"
-          :disabled="btnState.submitBtn.status"
+          :disabled="elmsState.submitBtn.status"
         >
-          <span>{{ btnState.submitBtn.name }}</span>
+          <span>{{ elmsState.submitBtn.name }}</span>
           <q-icon
             size="1.8em"
             style="padding: 4px 8px"
-            :name="btnState.submitBtn.icon"
+            :name="elmsState.submitBtn.icon"
           />
-          <!-- <span slot="loading">Sending...</span> -->
         </q-btn>
       </div>
     </div>
@@ -129,17 +145,18 @@
         <q-icon name="close"/>
       </q-btn>
     </div>
-    <q-btn 
+    <q-btn
+      v-if="true"
       round
-      :color="btnState.chatBtn.btn.color"
+      :color="elmsState.chatBtn.btn.color"
       class="send fixed-bottom-right animate-pop"
       :class="classes.chatBtn"
       style="margin: 0 32px 32px 0"
       @click="toggleChat()"
     >
       <q-icon
-        :color="btnState.chatBtn.icon.color"
-        :name="btnState.chatBtn.icon.name"
+        :color="elmsState.chatBtn.icon.color"
+        :name="elmsState.chatBtn.icon.name"
         :class="classes.chatBtnIcon"
       />
     </q-btn>
@@ -202,16 +219,17 @@
     },
     data() {
       return {
-        name: 'Daniel Piva',
-        email: 'imdanielpiva@gmail.com',
-        phone: 4384463775,
-        message: 'Esta é a minha mensagem',
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
         opened: false,
-        chatStatus: false,
+        chatStatus: true,
         isClientTyping: false,
         isSupportTyping: false,
-        popup: true,
-        btnState: {
+        popup: false,
+        isInputHided: true,
+        elmsState: {
           chatBtn: {
             icon: {
               name: 'chat',
@@ -219,13 +237,17 @@
             },
             btn: {
               name: '',
-              color: 'primary',
+              color: 'grey',
+              class: {
+                'mobile-btn': true,
+                'full-width': false
+              }
             }
           },
           submitBtn: {
             icon: 'send',
             color: 'primary',
-            name: 'Send',
+            name: '',
             status: false
           }
         },
@@ -237,27 +259,32 @@
             'animate-fade': false,
           },
           sendBtn: {
-            'full-width': true,
+            'full-width': false,
+            'mobile-btn': true
           }
         },
         messages: [
           {
-            label: 'Offline'
-          },
-          {
+            label: 'Offline',
             name: 'SatTrack',
             text: ['Hi, there, we\'re not online now ); but feel free to text us whenever you need. We will text you back as soon as we can!'],
             sent: false,
-            avatar: 'https://meusanimais.com.br/wp-content/uploads/2015/03/4-gato-enfermo.jpg',
-            stamp: 'Yesterday 13:34',
-            bgColor: 'grey'          
+            avatar: 'statics/me.png',
+            stamp: 'Yesterday 15:54',
+            bgColor: 'grey',
+            state: {
+              name: 'done',
+              color: 'positive',
+              sent: true,
+              side: false
+            }  
           }
         ]
       }
     },
     methods: {
       toggleChat() {
-        let icon = this.btnState.chatBtn.icon.name;
+        let icon = this.elmsState.chatBtn.icon.name;
 
         if (this.opened === true && icon === 'close') {
           setTimeout(() => {
@@ -279,60 +306,87 @@
         this.showChatBtn();
       },
       sendBtnToggle() {
-        let submitBtn = this.btnState.submitBtn;
+        let submitBtn = this.elmsState.submitBtn;
         if (this.message) {
           submitBtn.icon = "check";
           submitBtn.color = "positive";
           submitBtn.name = 'Sent';
-          submitBtn.status = !submitBtn.status;
+          // submitBtn.status = !submitBtn.status;
 
           setTimeout(() => {
             submitBtn.icon = "send";
             submitBtn.color = "primary";
             submitBtn.name = 'Send';
-            submitBtn.status = !submitBtn.status;
-          }, 500);
+            // submitBtn.status = !submitBtn.status;
+          }, 700);
         }
       },
       submit() {
-        if (this.name && this.email && this.phone && !this.$v.message.$invalid) {
+        if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
           this.messages.push({
             name: 'You',
             text: [this.message],
             sent: true,
-            avatar: 'statics/boy-avatar.png',
-            stamp: 'Yesterday 13:34',
+            avatar: 'statics/me.png',
+            stamp: '<div style="width:100%;" class="animate-scale flex items-center justify-end"><span>Ontem às 10:13 </span><i aria-hidden="false" style="margin-left:4px; font-size: 1.2em;" class="q-icon material-icons text-positive flex">done_all</i></div>',
+            state: {
+              name: 'done',
+              color: 'positive',
+              sent: true,
+              side: true
+            }
           });
+          setTimeout(() => {
+            this.isSupportTyping = true;
 
-          this.messages.push({
-            name: 'SatTrack',
-              text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
-              sent: false,
-              avatar: 'https://meusanimais.com.br/wp-content/uploads/2015/03/4-gato-enfermo.jpg',
-              stamp: 'Yesterday 13:34',
-            });
+            setTimeout(() => {
+              this.messages.push({
+                name: 'SatTrack',
+                text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
+                sent: false,
+                avatar: 'statics/me.png',
+                stamp: 'Yesterday 13:34',
+                bgColor: 'primary',
+                textColor: 'white',
+                state: {
+                state: {
+                  name: 'done',
+                  color: 'positive',
+                  sent: true,
+                  side: false
+                }
+              }
+              });
+              this.$scrollTo('#message', 500, {
+                container: '#chat',
+                easing: 'ease-in',
+                cancelable: false
+              });
 
-          this.message = '';
-
+              this.isSupportTyping = false;
+            }, 1400);
+          }, 1000);
           this.$scrollTo('#message', 500, {
             container: '#chat',
             easing: 'ease-in',
-            // offset: 5000
+            cancelable: false
           });
           this.sendBtnToggle();
+
+          this.message = '';
         }
-        this.$scrollTo('#message', 500, {
-          container: '#chat',
-          easing: 'ease-in',
-          // offset: 5000
-        });
+        
         this.$refs.message.focus(); 
+        this.whenClientIsNotTyping();
+      },
+      sendMessage(message) {
+          
       },
       openPopupStatus() {
-        return this.popup = true;
+        this.popup = true;
       },
       closePopupStatus() {
-        return this.popup = false;
+        this.popup = false;
       },
       delayTouch($v) {
         $v.$reset();
@@ -353,21 +407,31 @@
           return this.classes.chatBtn.display = '';
         }
       },
+      showMessageInput() {
+        this.$scrollTo('#message', 600, {
+          container: '#chat',
+          easing: 'ease-in',
+          cancelable: false,
+          offset: -350
+        });
+
+        if (this.name && this.email && this.$q.platform.is.mobile) {
+          return this.isInputHided = false;
+        }
+      },
       whenClientIsTyping() {
         const client = this.isClientTyping;
 
         if (!client) {
-          return setTimeout(() => {
+          setTimeout(() => {
             this.isClientTyping = true;
 
-            this.$scrollTo('#message', 200, {
-              container: '#chat',
-              easing: 'ease-in'
-            });
           }, 300);
           setTimeout(() => {
             this.whenClientIsNotTyping();
-          }, 3000);
+          }, 2000);
+
+          return;
         }
       },
       whenClientIsNotTyping() {
@@ -381,12 +445,8 @@
         if (!support) {
           return setTimeout(() => {
             this.isSupportTyping = true;
-
-            this.$scrollTo('#message', 200, {
-              container: '#chat',
-              easing: 'ease-in'
-            });
           }, 300);
+
           setTimeout(() => {
             this.whenSupportIsNotTyping();
           }, 3000);
@@ -396,12 +456,12 @@
         return setTimeout(() => {
           this.isSupportTyping = false;
         }, 1500);
-      },
+      }
     },
     computed: {
       chatBtnStatus() {
         if (!this.chatStatus){
-          this.btnState.chatBtn.color = 'dark';
+          this.elmsState.chatBtn.color = 'dark';
         }
       }
       
@@ -426,7 +486,7 @@
 
 <style scoped>
   #chat {
-    margin-bottom: 112px;
+    margin-bottom: 102px;
     margin-right: 24px;
     width: 380px;
     max-height: 70vh;
@@ -456,22 +516,14 @@
   .message {
     width: 370px;
     margin-right: 30px;
-    margin-bottom: 113px;
+    margin-bottom: 103px;
     padding: 24px;
     border-top: 1px solid #efefef;
     background: #ffffff;
   }
 
   .message-status {
-    padding: 12px;
-  }
-
-  .message-status-left-side {
-    margin-left: 38px;
-  }
-
-  .message-status-right-side {
-    margin-left: 236px;
+    margin-left: 252px;
   }
 
   .full-width {
@@ -506,6 +558,16 @@
     display: none;
   }
 
+  .mobile-input {
+    float: left;
+    width: 100%;
+  }
+
+  .mobile-btn {
+    margin-left: 4px;
+    margin-top: 28px;
+  }
+  
   @media (max-width: 768px) {
     #chat {
       margin: 0;
@@ -514,6 +576,7 @@
       min-width: 100%;
       min-height: 100vh;
       max-height: 100vh;
+      padding-top: 48px;
       border-radius: 0;
     }
 
@@ -522,18 +585,24 @@
     }
 
     #message {
-      margin-bottom: 178px;
+      margin-bottom: 132px;
     }
 
     .message {
       width: 100%;
+      margin-top: 0;
       margin-bottom: 0; 
       margin-right: 0 !important; 
-      padding: 24px;
+      padding: 12px;
     }
 
-    .message-status-right-side {
+    .message-status {
       margin-left: 600px;
+    }
+
+    .mobile-input {
+      margin: 0 !important;
+      padding: 0 !important;
     }
   }
 
@@ -552,6 +621,10 @@
 
     .mobile-chat {
       padding-top: 112px;
+    }
+
+    #message {
+      margin-bottom: 72px;
     }
   }
 
