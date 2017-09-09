@@ -4,18 +4,16 @@
       v-if="opened"
       id="chat"
       class="fixed-bottom-right animate-scale">
-      <q-toolbar
+      <q-btn
         v-if="$q.platform.is.mobile"
-        style="z-index:10000000;"
-        class="fixed-top"
+        round
+        color="primary"
+        class="fixed-top-right"
+        style="z-index:100000000; margin:16px;"
+        @click="toggleChat"
       >
-        <q-btn flat @click="toggleChat">
-          <q-icon name="close"/>
-        </q-btn>
-        <q-toolbar-title>
-          SatTrack Rastreamento e Logística
-        </q-toolbar-title>
-      </q-toolbar>
+        <q-icon name="close"/>
+      </q-btn>
       <div class="chat status">
         <div 
           v-for="(message, id) in messages"
@@ -34,17 +32,6 @@
           >
           </q-chat-message>
         </div>
-        <q-chat-message
-          v-if="false"
-          :sent="false"
-          text-color="black"
-          bg-color="grey-"
-          name="name"
-          avatar="statics/me.png"
-          class="animate-scale"
-        >
-          <q-spinner-dots size="1.8em" />
-        </q-chat-message>
         <q-chat-message
           v-if="isSupportTyping"
           :sent="false"
@@ -111,8 +98,6 @@
             v-model="message"
             float-label="What's your message?"
             @keyup.enter="submit()"
-            @input="hideChatBtn(), whenClientIsTyping()"
-            @blur="showChatBtn(), whenClientIsNotTyping()"
             :after="[{ icon: 'send',handler() { submit() } }]"
           />
         </q-field>
@@ -146,7 +131,7 @@
       </q-btn>
     </div>
     <q-btn
-      v-if="true"
+      v-if="($q.platform.is.mobile && !opened) || $q.platform.is.desktop"
       round
       :color="elmsState.chatBtn.btn.color"
       class="send fixed-bottom-right animate-pop"
@@ -181,10 +166,25 @@
 
 
   import Vue from 'vue';
+  import {
+    mapActions,
+    mapState,
+    mapGetters
+  } from 'vuex';
+
   import VueScrollTo from 'vue-scrollto';
 
-  import { Vuelidate, validationMixin } from 'vuelidate';
-  import { required, minLength, maxLength, email, between } from 'vuelidate/lib/validators';
+  import {
+    Vuelidate,
+    validationMixin
+  } from 'vuelidate';
+  import {
+    required,
+    minLength,
+    maxLength,
+    email,
+    between
+  } from 'vuelidate/lib/validators';
 
   const touchMap = new WeakMap();
 
@@ -219,10 +219,6 @@
     },
     data() {
       return {
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
         opened: false,
         chatStatus: true,
         isClientTyping: false,
@@ -262,24 +258,7 @@
             'full-width': false,
             'mobile-btn': true
           }
-        },
-        messages: [
-          {
-            label: 'Offline',
-            name: 'SatTrack',
-            text: ['Hi, there, we\'re not online now ); but feel free to text us whenever you need. We will text you back as soon as we can!'],
-            sent: false,
-            avatar: 'statics/me.png',
-            stamp: 'Yesterday 15:54',
-            bgColor: 'grey',
-            state: {
-              name: 'done',
-              color: 'positive',
-              sent: true,
-              side: false
-            }  
-          }
-        ]
+        }
       }
     },
     methods: {
@@ -287,14 +266,14 @@
         let icon = this.elmsState.chatBtn.icon.name;
 
         if (this.opened === true && icon === 'close') {
-          setTimeout(() => {
-            return icon = 'chat';
+            setTimeout(() => {
+              return icon = 'chat';
           }, 100);
         }
 
-        if (this.opened === false && this.icon === 'chat') {
-          setTimeout(() => {
-            return icon = 'close';
+        if (this.opened === false && icon === 'chat') {
+            setTimeout(() => {
+              return icon = 'close';
           }, 100) ;
         }
 
@@ -302,33 +281,24 @@
         this.opened = !this.opened;
 
         this.closePopupStatus();
-        this.hideChatBtn();
-        this.showChatBtn();
-      },
-      sendBtnToggle() {
-        let submitBtn = this.elmsState.submitBtn;
-        if (this.message) {
-          submitBtn.icon = "check";
-          submitBtn.color = "positive";
-          submitBtn.name = 'Sent';
-          // submitBtn.status = !submitBtn.status;
-
-          setTimeout(() => {
-            submitBtn.icon = "send";
-            submitBtn.color = "primary";
-            submitBtn.name = 'Send';
-            // submitBtn.status = !submitBtn.status;
-          }, 700);
-        }
       },
       submit() {
+        if (this.$q.platform.is.mobile) {
+          this.$scrollTo('#message', 600, {
+            container: '#chat',
+            easing: 'ease-in',
+            cancelable: false, 
+            offset: -100
+          })
+        }
+
         if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
           this.messages.push({
             name: 'You',
             text: [this.message],
             sent: true,
             avatar: 'statics/me.png',
-            stamp: '<div style="width:100%;" class="animate-scale flex items-center justify-end"><span>Ontem às 10:13 </span><i aria-hidden="false" style="margin-left:4px; font-size: 1.2em;" class="q-icon material-icons text-positive flex">done_all</i></div>',
+            stamp: '<div style="width:100%;" class="animate-scale flex items-center justify-end"><span>' + new Date().getTime().toString() + '</span><i aria-hidden="false" style="margin-left:4px; font-size: 1.2em;" class="q-icon material-icons text-positive flex">done_all</i></div>',
             state: {
               name: 'done',
               color: 'positive',
@@ -345,7 +315,7 @@
                 text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
                 sent: false,
                 avatar: 'statics/me.png',
-                stamp: 'Yesterday 13:34',
+                stamp: new Date().getTime().toString(),
                 bgColor: 'primary',
                 textColor: 'white',
                 state: {
@@ -371,16 +341,12 @@
             easing: 'ease-in',
             cancelable: false
           });
-          this.sendBtnToggle();
 
           this.message = '';
         }
         
         this.$refs.message.focus(); 
         this.whenClientIsNotTyping();
-      },
-      sendMessage(message) {
-          
       },
       openPopupStatus() {
         this.popup = true;
@@ -397,22 +363,12 @@
 
         touchMap.set($v, setTimeout($v.$touch, 7000));
       },
-      hideChatBtn() {
-        if (this.$q.platform.is.mobile && this.opened) {
-          return this.classes.chatBtn.display = 'none';
-        }
-      },
-      showChatBtn() {
-        if (this.$q.platform.is.mobile && !this.opened) {
-          return this.classes.chatBtn.display = '';
-        }
-      },
       showMessageInput() {
         this.$scrollTo('#message', 600, {
           container: '#chat',
           easing: 'ease-in',
           cancelable: false,
-          offset: -350
+          offset: -100
         });
 
         if (this.name && this.email && this.$q.platform.is.mobile) {
@@ -456,14 +412,52 @@
         return setTimeout(() => {
           this.isSupportTyping = false;
         }, 1500);
-      }
+      },
+      ...mapActions({ 
+        send: 'PUSH_ONLY_MESSAGE'
+      })
     },
     computed: {
       chatBtnStatus() {
         if (!this.chatStatus){
           this.elmsState.chatBtn.color = 'dark';
         }
-      }
+      },
+      message: {
+        get () {
+          return this.$store.state.chat.message
+        },
+        set (value) {
+          this.$store.commit('chat/UPDATE_MESSAGE', value)
+        }
+      },
+      name: {
+        get () {
+          return this.$store.state.chat.customer.name
+        },
+        set (value) {
+          this.$store.commit('chat/UPDATE_NAME', value)
+        }
+      },
+      email: {
+        get () {
+          return this.$store.state.chat.customer.email
+        },
+        set (value) {
+          this.$store.commit('chat/UPDATE_EMAIL', value)
+        }
+      },
+      phone: {
+        get () {
+          return this.$store.state.chat.customer.phone
+        },
+        set (value) {
+          this.$store.commit('chat/UPDATE_PHONE', value)
+        }
+      },
+      ...mapState({
+        messages: state => state.chat.messages
+      })
       
     },
     mixins: [ validationMixin ],
@@ -578,10 +572,6 @@
       max-height: 100vh;
       padding-top: 48px;
       border-radius: 0;
-    }
-
-    .status {
-      padding-top: 24px;
     }
 
     #message {
