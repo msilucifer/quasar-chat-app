@@ -282,6 +282,12 @@
 
         this.closePopupStatus();
       },
+      openChat() {
+        this.opened = true;  
+      },
+      closeChat() {
+        this.opened = false;
+      },
       submit() {
         if (this.$q.platform.is.mobile) {
           this.$scrollTo('#message', 600, {
