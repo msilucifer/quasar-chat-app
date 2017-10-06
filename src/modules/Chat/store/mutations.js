@@ -3,7 +3,7 @@ import { state } from './state';
 
 export default {
 	[TYPES.PUSH_ONLY_MESSAGE](state, message) {
-		console.log(TYPES)
+		// console.log(TYPES)
 		state.messages.push(message);
 	},
 	[TYPES.PUSH_CUSTOMER_INFO](state, data) {
@@ -25,6 +25,5 @@ export default {
 	},
 	[TYPES.READ_MESSAGE](state, payload) {
 		console.log(payload);
-		console.log(state.messages[payload.id]);
 	}
 };

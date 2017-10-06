@@ -29,7 +29,7 @@
             :text="message.text"
             :stamp="message.stamp"
             class="animate-scale"
-            :message="getMessage(id, message.stamp)"
+            :message="getMessage(id, message)"
           >
           </q-chat-message>
         </div>
@@ -174,6 +174,7 @@
   } from 'vuex';
 
   import VueScrollTo from 'vue-scrollto';
+  import { data, methods, computed } from './options'
 
   import {
     Vuelidate,
@@ -188,10 +189,13 @@
   } from 'vuelidate/lib/validators';
 
   import Chat from '../../components/base/Xuxu';
+  import './assets/style/chat.css';
 
   const touchMap = new WeakMap();
 
   Vue.use(VueScrollTo);
+
+  console.log(Chat);
 
   export default {
     name: 's-chat',
@@ -213,267 +217,11 @@
         type: Boolean,
         required: false,
         default: false
-      },
-      isOnline: {
-        type: Boolean,
-        required: true,
-        default: false
       }
     },
-    data() {
-      return {
-        opened: false,
-        chatStatus: true,
-        isClientTyping: false,
-        isSupportTyping: false,
-        popup: false,
-        isInputHided: true,
-        elmsState: {
-          chatBtn: {
-            icon: {
-              name: 'chat',
-              color: 'white'
-            },
-            btn: {
-              name: '',
-              color: 'grey',
-              class: {
-                'mobile-btn': true,
-                'full-width': false
-              }
-            }
-          },
-          submitBtn: {
-            icon: 'send',
-            color: 'primary',
-            name: '',
-            status: false
-          }
-        },
-        classes:{
-          chatBtn: {
-            display: ''          
-          },
-          chatBtnIcon: {
-            'animate-fade': false,
-          },
-          sendBtn: {
-            'full-width': false,
-            'mobile-btn': true
-          }
-        }
-      }
-    },
-    methods: {
-      toggleChat() {
-        let icon = this.elmsState.chatBtn.icon.name;
-
-        if (this.opened === true && icon === 'close') {
-            setTimeout(() => {
-              return this.elmsState.chatBtn.icon.name = 'chat';
-          }, 100);
-        }
-
-        if (this.opened === false && icon === 'chat') {
-            setTimeout(() => {
-              return this.elmsState.chatBtn.icon.name = 'close';
-          }, 100) ;
-        }
-
-        this.classes.chatBtnIcon['animate-fade'] = true;
-        this.opened = !this.opened;
-
-        this.closePopupStatus();
-      },
-      openChat() {
-        this.elmsState.chatBtn.icon.name = 'chat';        
-        this.opened = true;  
-      },
-      closeChat() {
-        this.elmsState.chatBtn.icon.name = 'chat';
-        this.opened = false;
-      },
-      submit() {
-        if (this.$q.platform.is.mobile) {
-          this.$scrollTo('#message', 600, {
-            container: '#chat',
-            easing: 'ease-in',
-            cancelable: false, 
-            offset: -100
-          })
-        }
-
-        if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
-          this.messages.push({
-            name: 'You',
-            text: [this.message],
-            sent: true,
-            avatar: '../../statics/me.png',
-            stamp: '<div style="width:100%;" class="animate-scale flex items-center justify-end"><span>' + new Date().getTime().toString() + '</span><i aria-hidden="false" style="margin-left:4px; font-size: 1.2em;" class="q-icon material-icons text-positive flex">done_all</i></div>',
-            state: {
-              name: 'done',
-              color: 'positive',
-              sent: true,
-              side: true
-            }
-          });
-          setTimeout(() => {
-            this.isSupportTyping = true;
-
-            setTimeout(() => {
-              this.messages.push({
-                name: 'SatTrack',
-                text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
-                sent: false,
-                avatar: '../../statics/me.png',
-                stamp: new Date().getTime().toString(),
-                bgColor: 'primary',
-                textColor: 'white',
-                state: {
-                state: {
-                  name: 'done',
-                  color: 'positive',
-                  sent: true,
-                  side: false
-                }
-              }
-              });
-              this.$scrollTo('#message', 500, {
-                container: '#chat',
-                easing: 'ease-in',
-                cancelable: false
-              });
-
-              this.isSupportTyping = false;
-            }, 1400);
-          }, 1000);
-          this.$scrollTo('#message', 500, {
-            container: '#chat',
-            easing: 'ease-in',
-            cancelable: false
-          });
-
-          this.message = '';
-        }
-        
-        this.$refs.message.focus(); 
-        this.whenClientIsNotTyping();
-      },
-      openPopupStatus() {
-        this.popup = true;
-      },
-      closePopupStatus() {
-        this.popup = false;
-      },
-      delayTouch($v) {
-        $v.$reset();
-
-        if (touchMap.has($v)) {
-          clearTimeout(touchMap.get($v));
-        }
-
-        touchMap.set($v, setTimeout($v.$touch, 7000));
-      },
-      showMessageInput() {
-        this.$scrollTo('#message', 600, {
-          container: '#chat',
-          easing: 'ease-in',
-          cancelable: false,
-          offset: -100
-        });
-
-        if (this.name && this.email && this.$q.platform.is.mobile) {
-          return this.isInputHided = false;
-        }
-      },
-      whenClientIsTyping() {
-        const client = this.isClientTyping;
-
-        if (!client) {
-          setTimeout(() => {
-            this.isClientTyping = true;
-
-          }, 300);
-          setTimeout(() => {
-            this.whenClientIsNotTyping();
-          }, 2000);
-
-          return;
-        }
-      },
-      whenClientIsNotTyping() {
-        return setTimeout(() => {
-          this.isClientTyping = false;
-        }, 1500);
-      },
-      whenSupportIsTyping() {
-        const support = this.isSupportTyping;
-
-        if (!support) {
-          return setTimeout(() => {
-            this.isSupportTyping = true;
-          }, 300);
-
-          setTimeout(() => {
-            this.whenSupportIsNotTyping();
-          }, 3000);
-        }
-      },
-      whenSupportIsNotTyping() {
-        return setTimeout(() => {
-          this.isSupportTyping = false;
-        }, 1500);
-      },
-      ...mapActions({ 
-        send: 'PUSH_ONLY_MESSAGE'
-      }),
-      getMessage(id, message) {
-        this.$store.commit('chat/READ_MESSAGE', { id, message });
-      }
-    },
-    computed: {
-      chatBtnStatus() {
-        if (!this.chatStatus){
-          this.elmsState.chatBtn.color = 'dark';
-        }
-      },
-      message: {
-        get () {
-          return this.$store.state.chat.message
-        },
-        set (value) {
-          this.$store.commit('chat/UPDATE_MESSAGE', value)
-        }
-      },
-      name: {
-        get () {
-          return this.$store.state.chat.customer.name
-        },
-        set (value) {
-          this.$store.commit('chat/UPDATE_NAME', value)
-        }
-      },
-      email: {
-        get () {
-          return this.$store.state.chat.customer.email
-        },
-        set (value) {
-          this.$store.commit('chat/UPDATE_EMAIL', value)
-        }
-      },
-      phone: {
-        get () {
-          return this.$store.state.chat.customer.phone
-        },
-        set (value) {
-          this.$store.commit('chat/UPDATE_PHONE', value)
-        }
-      },
-      ...mapState({
-        messages: state => state.chat.messages
-      })
-      
-    },
+    data,
+    methods,
+    computed,
     mixins: [ validationMixin ],
     validations: {
       email: {
@@ -491,150 +239,3 @@
     }
   }
 </script>
-
-<style scoped>
-  #chat {
-    margin-bottom: 102px;
-    margin-right: 24px;
-    width: 380px;
-    max-height: 70vh;
-    min-height: 580px;
-    overflow: auto;
-    overflow-x: hidden;
-    border-radius: 0.4em;
-    border: 1px solid #e9e9e9;
-    box-shadow: 0px 0px 40px -15px rgba(0,0,0,0.4);
-  }
-
-  .chat {
-    padding: 24px;
-  }
-
-  .inputs {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #efefef;
-  }
-
-  #message {
-    margin-bottom: 172px;
-    padding: 0;
-  }
-
-  .message {
-    width: 370px;
-    margin-right: 30px;
-    margin-bottom: 103px;
-    padding: 24px;
-    border-top: 1px solid #efefef;
-    background: #ffffff;
-  }
-
-  .message-status {
-    margin-left: 252px;
-  }
-
-  .full-width {
-    width: 100%;
-  }
-
-  .caption {
-    color: #333;
-    font-weight: bold;
-    padding-bottom:4px;
-    text-transform: uppercase;
-    border-bottom: 2px solid #e9e9e9;
-  }
-
-  .popup-status {
-    color: #ffffff !important;
-    margin: 32px 112px;
-    padding: 12px 12px 12px 32px;
-    border-radius: .2em;
-    background: rgb(33, 186, 69);
-    -webkit-animation: q-bounce 2s infinite;
-    animation: q-bounce 2s infinite;
-  }
-
-  .popup-status p {
-    margin-top : 12px !important;
-    margin-bottom : 12px !important;
-    margin-right: 6px !important;
-  }
-
-  .display {
-    display: none;
-  }
-
-  .mobile-input {
-    float: left;
-    width: 100%;
-  }
-
-  .mobile-btn {
-    margin-left: 4px;
-    margin-top: 28px;
-  }
-  
-  @media (max-width: 768px) {
-    #chat {
-      margin: 0;
-      width: 100%;
-      max-width: 100%;
-      min-width: 100%;
-      min-height: 100vh;
-      max-height: 100vh;
-      padding-top: 48px;
-      border-radius: 0;
-    }
-
-    #message {
-      margin-bottom: 132px;
-    }
-
-    .message {
-      width: 100%;
-      margin-top: 0;
-      margin-bottom: 0; 
-      margin-right: 0 !important; 
-      padding: 12px;
-    }
-
-    .message-status {
-      margin-left: 600px;
-    }
-
-    .mobile-input {
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-  }
-
-  @media (max-width: 515px) {
-    .popup-status {
-      color: #ffffff !important;
-      margin-bottom: 112px;
-      margin-right: 32px;
-      margin-left: 0;
-      padding: 12px;
-      border-radius: .2em;
-      background: rgb(33, 186, 69);
-      -webkit-animation: q-bounce 2s infinite;
-      animation: q-bounce 2s infinite;
-    }
-
-    .mobile-chat {
-      padding-top: 112px;
-    }
-
-    #message {
-      margin-bottom: 72px;
-    }
-  }
-
-  @media (max-width: 315px) {
-    .popup-status {
-      display: none;
-    }
-  }
-</style>
