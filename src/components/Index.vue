@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import SChat from './Chat';
+import SChat from '../modules/Chat/Chat';
 
 import { QLayout } from 'quasar';
 
