@@ -111,6 +111,9 @@ export const methods = {
   closePopupStatus() {
     this.popup = false;
   },
+  handlers(event, payload) {
+    console.log(event, payload);
+  },
   delayTouch($v) {
     $v.$reset();
     
