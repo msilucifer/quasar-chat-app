@@ -3,7 +3,7 @@ import mutations from '../store/mutations';
 import * as actions from '../store/actions';
 import * as getters from '../store/getters';
 
-import chat from '../Chat/store';
+import chat from '../chat/store';
 
 import Vue from 'vue';
 import Vuex from 'vuex';
