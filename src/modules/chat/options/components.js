@@ -1,4 +1,4 @@
-import Chat from '../base/message';
+import Chat from '../components/message';
 import {
   QField,
   QInput, 
