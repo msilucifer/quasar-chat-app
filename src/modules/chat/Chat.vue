@@ -103,24 +103,6 @@
             :after="[{ icon: 'send', handler() { submit() } }]"
           />
         </q-field>
-        <q-btn
-          v-if="false"        
-          ref="btn"
-          class="mobile-btn"
-          no-caps
-          rounded
-          :color="elmsState.submitBtn.color"
-          :class="classes.sendBtn"
-          @click="submit"
-          :disabled="elmsState.submitBtn.status"
-        >
-          <span>{{ elmsState.submitBtn.name }}</span>
-          <q-icon
-            size="1.8em"
-            style="padding: 4px 8px"
-            :name="elmsState.submitBtn.icon"
-          />
-        </q-btn>
       </div>
     </div>
     <div
