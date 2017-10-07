@@ -1,6 +1,6 @@
 <template>
   <div id="body">
-    <s-chat :isOnline="false" slot="chat"></s-chat>
+    <s-chat slot="chat"></s-chat>
   </div>
 </template>
 
