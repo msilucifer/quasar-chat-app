@@ -1,9 +1,8 @@
+
+
 export default () => {
   return {
-    opened: false,
     chatStatus: true,
-    isClientTyping: false,
-    isSupportTyping: false,
     popup: false,
     isInputHided: true,
     elmsState: {

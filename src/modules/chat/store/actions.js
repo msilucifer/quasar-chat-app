@@ -1,7 +1,7 @@
 import * as TYPES from './mutation-types';
 
 export const pushMessage = ({ commit, state, dispatch }, message) => {
-	dispatch('PUSH_ONLY_MESSAGE');
+	commit('PUSH_ONLY_MESSAGE');
 };
 
 export const readMessage = ({ state, commit }, payload) => {

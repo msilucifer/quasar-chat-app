@@ -98,8 +98,9 @@
             class="message-input"
             v-model="message"
             float-label="What's your message?"
+            @input="notifyClientIsTyping()"
             @keyup.enter="submit()"
-            :after="[{ icon: 'send',handler() { submit() } }]"
+            :after="[{ icon: 'send', handler() { submit() } }]"
           />
         </q-field>
         <q-btn
@@ -146,40 +147,24 @@
         :class="classes.chatBtnIcon"
       />
     </q-btn>
-    {{chatBtnStatus}}
+    {{ chatBtnStatus }}
+    <pre>
+      {{ $store.state.chat }}
+    </pre>
   </div>
 </template>
 
 <script>
-  import {
-    QField,
-    QInput, 
-    QLayout,
-    QToolbar,
-    QToolbarTitle,
-    QChatMessage,
-    QSpinnerDots,
-    QTransition,
-    QFab,
-    QBtn,
-    QIcon
-  } from 'quasar';
-
-
   import Vue from 'vue';
   import {
-    mapActions,
-    mapState,
-    mapGetters
-  } from 'vuex';
+    data,
+    methods,
+    computed,
+    components
+  } from './options'
 
   import VueScrollTo from 'vue-scrollto';
-  import { data, methods, computed } from './options'
-
-  import {
-    Vuelidate,
-    validationMixin
-  } from 'vuelidate';
+  import { validationMixin } from 'vuelidate';
   import {
     required,
     minLength,
@@ -187,38 +172,14 @@
     email,
     between
   } from 'vuelidate/lib/validators';
-
-  import Chat from '../../components/base/Xuxu';
+  
   import './assets/style/chat.css';
-
-  const touchMap = new WeakMap();
 
   Vue.use(VueScrollTo);
 
-  console.log(Chat);
-
   export default {
     name: 's-chat',
-    components: {
-      QField,
-      QInput,
-      QLayout,
-      QToolbar,
-      QToolbarTitle,
-      QChatMessage,
-      QSpinnerDots,
-      QTransition,
-      QFab,
-      QBtn,
-      QIcon
-    },
-    props: {
-      open: {
-        type: Boolean,
-        required: false,
-        default: false
-      }
-    },
+    components,
     data,
     methods,
     computed,
@@ -235,7 +196,7 @@
       message: {
         minLength: minLength(6),
         required
-      }
+      } 
     }
   }
 </script>

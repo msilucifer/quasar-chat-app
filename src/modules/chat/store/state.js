@@ -4,13 +4,15 @@ export default {
   customer: {
     name: '',
     email: '',
-    phone: '',
+    phone: ''
   },
   message: '',
   opened: false,
-  isSupportOnline: true,
-  isSupportTyping: false,
-  isClientTyping: false,
+  isSupportOnline: false,
+  isTyping: {
+    support: false,
+    client: false,
+  },
   messages: [
     {
       label: 'Offline',

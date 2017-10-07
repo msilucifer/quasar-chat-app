@@ -3,7 +3,6 @@ import { state } from './state';
 
 export default {
 	[TYPES.PUSH_ONLY_MESSAGE](state, message) {
-		// console.log(TYPES)
 		state.messages.push(message);
 	},
 	[TYPES.PUSH_CUSTOMER_INFO](state, data) {
@@ -24,6 +23,27 @@ export default {
 		state.customer.phone = phone;
 	},
 	[TYPES.READ_MESSAGE](state, payload) {
-		console.log(payload);
+		// console.log(payload);
+	},
+	[TYPES.TOGGLE_CHAT](state) {
+		return state.opened = !state.opened;
+	},
+	[TYPES.OPEN_CHAT](state) {
+		return state.opened = true;
+	},
+	[TYPES.CLOSE_CHAT](state) {
+		return state.opened = false;
+	},
+	[TYPES.IS_SUPPORT_TYPING](state) {
+		state.isTyping.support = true;
+		setTimeout(() => {
+			return state.isTyping.support = false;
+		}, 1600);
+	},
+	[TYPES.NOTIFY_CLIENT_IS_TYPING](state) {
+		state.isTyping.client = true;
+		setTimeout(() => {
+			state.isTyping.client = false;
+		}, 1600);
 	}
 };

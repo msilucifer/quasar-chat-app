@@ -1,33 +1,48 @@
+import { default as cmptd } from './computed';
 import { mapActions } from 'vuex';
+import { Vuelidate } from 'vuelidate';
 
-export default {
+const touchMap = new WeakMap();
+
+export const methods = {
   toggleChat() {
     let icon = this.elmsState.chatBtn.icon.name;
-
+    
     if (this.opened === true && icon === 'close') {
-        setTimeout(() => {
-          return this.elmsState.chatBtn.icon.name = 'chat';
+      setTimeout(() => {
+        return this.elmsState.chatBtn.icon.name = 'chat';
       }, 100);
     }
-
+    
     if (this.opened === false && icon === 'chat') {
-        setTimeout(() => {
-          return this.elmsState.chatBtn.icon.name = 'close';
+      setTimeout(() => {
+        return this.elmsState.chatBtn.icon.name = 'close';
       }, 100) ;
     }
-
-    this.classes.chatBtnIcon['animate-fade'] = true;
-    this.opened = !this.opened;
+    
+    this.classes.chatBtnIcon['animate-scale'] = true;
+    this.$store.state.chat.opened = !this.$store.state.chat.opened;
 
     this.closePopupStatus();
   },
   openChat() {
-    this.elmsState.chatBtn.icon.name = 'chat';        
+    this.elmsState.chatBtn.icon.name = 'close';        
     this.opened = true;  
   },
   closeChat() {
     this.elmsState.chatBtn.icon.name = 'chat';
     this.opened = false;
+  },
+  open() {
+    this.elmsState.chatBtn.icon.name = 'close';
+    this.$store.commit('chat/OPEN_CHAT');
+  },
+  close() {
+    this.elmsState.chatBtn.icon.name = 'chat';
+    this.$store.commit('chat/CLOSE_CHAT');
+  },
+  notifyClientIsTyping() {
+    this.$store.commit('chat/NOTIFY_CLIENT_IS_TYPING');
   },
   submit() {
     if (this.$q.platform.is.mobile) {
@@ -38,7 +53,7 @@ export default {
         offset: -100
       })
     }
-
+    
     if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
       this.messages.push({
         name: 'You',
@@ -54,8 +69,6 @@ export default {
         }
       });
       setTimeout(() => {
-        this.isSupportTyping = true;
-
         setTimeout(() => {
           this.messages.push({
             name: 'SatTrack',
@@ -66,21 +79,19 @@ export default {
             bgColor: 'primary',
             textColor: 'white',
             state: {
-            state: {
-              name: 'done',
-              color: 'positive',
-              sent: true,
-              side: false
+              state: {
+                name: 'done',
+                color: 'positive',
+                sent: true,
+                side: false
+              }
             }
-          }
           });
           this.$scrollTo('#message', 500, {
             container: '#chat',
             easing: 'ease-in',
             cancelable: false
           });
-
-          this.isSupportTyping = false;
         }, 1400);
       }, 1000);
       this.$scrollTo('#message', 500, {
@@ -88,12 +99,11 @@ export default {
         easing: 'ease-in',
         cancelable: false
       });
-
+      
       this.message = '';
     }
-    
+    this.$store.commit('chat/IS_SUPPORT_TYPING');
     this.$refs.message.focus(); 
-    this.whenClientIsNotTyping();
   },
   openPopupStatus() {
     this.popup = true;
@@ -103,11 +113,11 @@ export default {
   },
   delayTouch($v) {
     $v.$reset();
-
+    
     if (touchMap.has($v)) {
       clearTimeout(touchMap.get($v));
     }
-
+    
     touchMap.set($v, setTimeout($v.$touch, 7000));
   },
   showMessageInput() {
@@ -117,48 +127,10 @@ export default {
       cancelable: false,
       offset: -100
     });
-
+    
     if (this.name && this.email && this.$q.platform.is.mobile) {
       return this.isInputHided = false;
     }
-  },
-  whenClientIsTyping() {
-    const client = this.isClientTyping;
-
-    if (!client) {
-      setTimeout(() => {
-        this.isClientTyping = true;
-
-      }, 300);
-      setTimeout(() => {
-        this.whenClientIsNotTyping();
-      }, 2000);
-
-      return;
-    }
-  },
-  whenClientIsNotTyping() {
-    return setTimeout(() => {
-      this.isClientTyping = false;
-    }, 1500);
-  },
-  whenSupportIsTyping() {
-    const support = this.isSupportTyping;
-
-    if (!support) {
-      return setTimeout(() => {
-        this.isSupportTyping = true;
-      }, 300);
-
-      setTimeout(() => {
-        this.whenSupportIsNotTyping();
-      }, 3000);
-    }
-  },
-  whenSupportIsNotTyping() {
-    return setTimeout(() => {
-      this.isSupportTyping = false;
-    }, 1500);
   },
   ...mapActions({ 
     send: 'PUSH_ONLY_MESSAGE'
@@ -167,3 +139,5 @@ export default {
     this.$store.commit('chat/READ_MESSAGE', { id, message });
   }
 };
+
+export const computed = cmptd;
