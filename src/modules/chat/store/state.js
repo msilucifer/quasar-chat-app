@@ -15,6 +15,7 @@ export default {
   },
   messages: [
     {
+      id: 0,
       label: 'Offline',
       name: 'SatTrack',
       text: ['Hi, there, we\'re not online now ); but feel free to text us whenever you need. We will text you back as soon as we can!'],
@@ -22,12 +23,8 @@ export default {
       avatar: 'statics/me.png',
       stamp: 'Yesterday 15:54',
       bgColor: 'grey',
-      state: {
-        name: 'done',
-        color: 'positive',
-        sent: true,
-        side: false
-      }  
+      delivered: null,
+      seen: null
     }
   ]
 };
