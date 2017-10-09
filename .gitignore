@@ -9,4 +9,5 @@ test/e2e/reports
 cordova/platforms
 cordova/plugins
 thumbs.db
+.editorconfig
 !.gitkeep
