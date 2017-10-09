@@ -1,18 +1,29 @@
 <template>
-  <div class="q-message-text" :class="messageClass">
-    <span class="q-message-text-content" :class="textClass">          
-      <q-spinner-dots size="2em"/>
-    </span>
+  <div>
+    <img class="q-message-avatar" :src="avatar">   
+    <q-spinner-dots size="2em"/>
   </div>
 </template>
 
 <script>
+import { QSpinnerDots } from 'quasar';
+
 export default {
   name: 'chat-spinner',
+  components: {
+    QSpinnerDots
+  },
   props: {
-    textClass: Object,
-    textColor: String,
-    bgColor: String
+    avatar: {
+      type: String,
+      default: 'statics/me.png'
+    },
+    classes: Object,
+    color: String,
+    bgColor: { 
+      type: String,
+      default: 'grey'
+    }
   },
   computed: {
     textClass () {

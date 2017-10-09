@@ -1,19 +1,15 @@
 <template>
-  <div>
-    <!-- <div class="q-message-stamp"></div> -->
-    <div
-      style="width:100%;"
-      class="q-message-stamp animate-scale"
+  <div
+    class="q-message-stamp animate-scale"
+  >
+    {{ options.stamp }}
+    <i
+      aria-hidden="false"
+      class="q-icon material-icons text-white stamp"
     >
-      {{ options.stamp }}
-      <i
-        aria-hidden="false"
-        class="q-icon material-icons text-white"
-      >
-      done_all
-      </i>
-    </div>
-    {{ options }}
+    {{ icon }}
+    </i>
+    {{ wasItSent }}
   </div>
 </template>
 
@@ -21,9 +17,18 @@
 export default {
   name: 'chatStamp',
   props: ['options'],
-  methods: {
+  data() {
+    return {
+      icon: ''
+    };
+  },
+  computed: {
     wasItSent() {
-
+      if (1 > 0) {
+        this.icon = 'done';
+        
+        return;
+      }
     },
     wasItSeen() {
 
