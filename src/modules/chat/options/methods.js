@@ -57,21 +57,19 @@ export const methods = {
     
     if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
       this.$store.commit('chat/PUSH_ONLY_MESSAGE', this.messages.push({
+        id: this.generateUId(),
         name: 'You',
         text: [this.message],
         sent: true,
         avatar: '../../statics/me.png',
         stamp: new Date().getTime().toString(),
-        state: {
-          name: 'done',
-          color: 'positive',
-          sent: true,
-          side: true
-        }
+        delivered: null,
+        seen: null
       }));
       setTimeout(() => {
         setTimeout(() => {
           this.messages.push({
+            id: this.generateUId(),
             name: 'SatTrack',
             text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
             sent: false,
@@ -79,14 +77,8 @@ export const methods = {
             stamp: new Date().getTime().toString(),
             bgColor: 'primary',
             textColor: 'white',
-            state: {
-              state: {
-                name: 'done',
-                color: 'positive',
-                sent: true,
-                side: false
-              }
-            }
+            delivered: null,
+            seen: null
           });
           this.$scrollTo('#message', 500, {
             container: '#chat',
@@ -114,6 +106,9 @@ export const methods = {
   },
   handlers(event, payload) {
     console.log(event, payload);
+  },
+  generateUId() {
+    return (Date.now() + Math.random().toString(36).substr(2, 100)).toString(36);
   },
   delayTouch($v) {
     $v.$reset();
