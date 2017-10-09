@@ -45,5 +45,15 @@ export default {
 		setTimeout(() => {
 			state.isTyping.client = false;
 		}, 1600);
+	},
+	[TYPES.SEND_OVER_HTTP](state, payload) {
+		axios.get(`http://localhost:3000/`)
+		.then(response => {
+			// JSON responses are automatically parsed.
+			console.log(response, 'r');
+		})
+		.catch(e => {
+			console.log(e);
+		});
 	}
 };
