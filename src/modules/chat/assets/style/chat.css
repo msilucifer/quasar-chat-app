@@ -83,6 +83,11 @@
   margin-top: 28px;
 }
 
+.mobile-close-btn {
+  z-index:100000000;
+  margin:16px;
+}
+
 @media (max-width: 768px) {
   #chat {
     margin: 0;
