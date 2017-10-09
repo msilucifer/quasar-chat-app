@@ -25,12 +25,6 @@
             <chat-stamp :options="{ stamp, sent, index }" />
           </span>
         </div>
-        <div v-if="!text || !text.length" class="q-message-text" :class="messageClass">
-          <span class="q-message-text-content" :class="textClass">
-            <slot></slot>
-            <chat-stamp :options="{ stamp, sent }" />
-          </span>
-        </div>
       </div>
     </div>
   </div>
