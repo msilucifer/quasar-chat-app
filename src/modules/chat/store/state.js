@@ -7,7 +7,7 @@ export default {
     phone: ''
   },
   message: '',
-  opened: false,
+  opened: true,
   isSupportOnline: false,
   isTyping: {
     support: false,
