@@ -1,12 +1,12 @@
-import Chat from '../components/message';
+import Chat from '../components/Chat';
+import ChatSpinner from '../components/ChatSpinner';
+
 import {
   QField,
   QInput, 
   QLayout,
   QToolbar,
   QToolbarTitle,
-  QChatMessage,
-  QSpinnerDots,
   QTransition,
   QFab,
   QBtn,
@@ -19,11 +19,10 @@ export default{
   QLayout,
   QToolbar,
   QToolbarTitle,
-  QChatMessage,
-  QSpinnerDots,
   QTransition,
   QFab,
   QBtn,
   QIcon,
-  Chat
+  Chat,
+  ChatSpinner
 }
