@@ -8,8 +8,7 @@
         v-if="$q.platform.is.mobile"
         round
         color="primary"
-        class="fixed-top-right"
-        style="z-index:100000000; margin:16px;"
+        class="fixed-top-right mobile-close-btn"
         @click="toggleChat"
       >
         <q-icon name="close"/>
