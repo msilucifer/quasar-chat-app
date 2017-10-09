@@ -28,22 +28,10 @@
             :text="message.text"
             :stamp="message.stamp"
             class="animate-scale"
-            :message="getMessage(id, message)"
           >
           </chat>
         </div>
-        <chat
-          v-if="isSupportTyping"
-          :sent="false"
-          text-color="black"
-          bg-color="grey-"
-          name="name"
-          avatar="../../statics/me.png"
-          class="animate-scale"
-        >
-          <q-spinner-dots size="2em" />
-        </chat>
-        
+        <chat-spinner v-if="isSupportTyping" />
         <div
           class="inputs"
           v-if="messages.length <= 1"
