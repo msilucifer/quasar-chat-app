@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { default as cmptd } from './computed';
 import { mapActions } from 'vuex';
 import { Vuelidate } from 'vuelidate';
@@ -55,19 +56,19 @@ export const methods = {
     }
     
     if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
-      this.messages.push({
+      this.$store.commit('chat/PUSH_ONLY_MESSAGE', this.messages.push({
         name: 'You',
         text: [this.message],
         sent: true,
         avatar: '../../statics/me.png',
-        stamp: '<div style="width:100%;" class="animate-scale flex items-center justify-end"><span>' + new Date().getTime().toString() + '</span><i aria-hidden="false" style="margin-left:4px; font-size: 1.2em;" class="q-icon material-icons text-positive flex">done_all</i></div>',
+        stamp: new Date().getTime().toString(),
         state: {
           name: 'done',
           color: 'positive',
           sent: true,
           side: true
         }
-      });
+      }));
       setTimeout(() => {
         setTimeout(() => {
           this.messages.push({
