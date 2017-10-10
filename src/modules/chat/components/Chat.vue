@@ -2,17 +2,17 @@
   <div
     class="q-message"
     :class="{
-      'q-message-sent': sent,
-      'q-message-received': !sent
+      'q-message-sent': side,
+      'q-message-received': !side
     }"
   >
-    <p v-if="label" class="q-message-label text-center" v-html="label"></p>
+    <p v-if="label" class="q-message-label text-center">{{ label }}</p>
     <div v-if="avatar" class="q-message-container row items-end no-wrap">
       <slot name="avatar">
         <img class="q-message-avatar" :src="avatar">
       </slot>
       <div class="column">
-        <div v-if="name" class="q-message-name" v-html="name"></div>
+        <div v-if="name" class="q-message-name">{{ name }}</div>
         <div
           v-for="(msg, index) in text"
           :key="index"
@@ -20,9 +20,8 @@
           :class="messageClass"
         >
           <span class="q-message-text-content" :class="textClass">
-            <div v-html="msg"></div>
-            {{ index }}
-            <chat-stamp :options="{ stamp, sent, index }" />
+            <p>{{ msg }}</p>
+            <chat-stamp :props="{ status }" />
           </span>
         </div>
       </div>
@@ -39,14 +38,15 @@ export default {
     ChatStamp
   },
   props: {
-    sent: Boolean,
+    id: String,
+    side: Boolean,
     label: String,
     bgColor: String,
     textColor: String,
     name: String,
     avatar: String,
     text: Array,
-    stamp: String,
+    status: Object,
     spinner: Object
   },
   computed: {
