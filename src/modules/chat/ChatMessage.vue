@@ -26,7 +26,7 @@
             :name="message.name"
             :avatar="message.avatar"
             :text="message.text"
-            :status="message.status"
+            :status="message.info"
             class="animate-scale"
           >
           </chat>

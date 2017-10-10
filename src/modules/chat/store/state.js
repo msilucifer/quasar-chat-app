@@ -14,5 +14,6 @@ export default {
     support: false,
     client: false,
   },
-  messages: []
+  messages: [],
+  toBeRead: []
 };

@@ -62,7 +62,8 @@ export const methods = {
         text: [this.message],
         avatar: '../../statics/me.png',
         side: true,
-        status: {
+        info: {
+          type: 1,
           stamp: new Date().getTime(),
           sent: false,
           seen: false,
@@ -77,7 +78,8 @@ export const methods = {
           text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
           avatar: '../../statics/me.png',
           side: false,
-          status: {
+          info: {
+            type: 0,
             stamp: new Date().getTime(),
             sent: false,
             seen: false,
