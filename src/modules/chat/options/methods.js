@@ -56,37 +56,42 @@ export const methods = {
     }
     
     if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
-      this.$store.commit('chat/PUSH_ONLY_MESSAGE', this.messages.push({
+      this.$store.commit('chat/PUSH_ONLY_MESSAGE', {
         id: this.generateUId(),
         name: 'You',
         text: [this.message],
-        sent: true,
         avatar: '../../statics/me.png',
-        stamp: new Date().getTime().toString(),
-        delivered: null,
-        seen: null
-      }));
+        side: true,
+        status: {
+          stamp: new Date().getTime(),
+          sent: false,
+          seen: false,
+          delivered: false
+        }
+      });
+      this.$store.commit('chat/IS_SUPPORT_TYPING');    
       setTimeout(() => {
-        setTimeout(() => {
-          this.messages.push({
-            id: this.generateUId(),
-            name: 'SatTrack',
-            text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
+        this.$store.commit('chat/PUSH_ONLY_MESSAGE',{
+          id: this.generateUId(),
+          name: 'SatTrack',
+          text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
+          avatar: '../../statics/me.png',
+          side: false,
+          status: {
+            stamp: new Date().getTime(),
             sent: false,
-            avatar: '../../statics/me.png',
-            stamp: new Date().getTime().toString(),
-            bgColor: 'primary',
-            textColor: 'white',
-            delivered: null,
-            seen: null
-          });
-          this.$scrollTo('#message', 500, {
-            container: '#chat',
-            easing: 'ease-in',
-            cancelable: false
-          });
-        }, 1400);
-      }, 1000);
+            seen: false,
+            delivered: false
+          },
+          bgColor: 'primary',
+          textColor: 'white'
+        });
+        this.$scrollTo('#message', 500, {
+          container: '#chat',
+          easing: 'ease-in',
+          cancelable: false
+        });
+      }, 2400);
       this.$scrollTo('#message', 500, {
         container: '#chat',
         easing: 'ease-in',
@@ -95,7 +100,7 @@ export const methods = {
       
       this.message = '';
     }
-    this.$store.commit('chat/IS_SUPPORT_TYPING');
+
     this.$refs.message.focus(); 
   },
   openPopupStatus() {
@@ -133,10 +138,7 @@ export const methods = {
   },
   ...mapActions({ 
     send: 'PUSH_ONLY_MESSAGE'
-  }),
-  getMessage(id, message) {
-    this.$store.commit('chat/READ_MESSAGE', { id, message });
-  }
+  })
 };
 
 export const computed = cmptd;
