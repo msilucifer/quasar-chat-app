@@ -2,8 +2,18 @@ import * as TYPES from './mutation-types';
 import { state } from './state';
 
 export default {
+  [TYPES.PUSH_WELCOME_MESSAGE](state, welcomeMessage) {
+    if (state.welcomeMessage === false) {
+      state.welcomeMessage = true;
+      state.messages.push(welcomeMessage);
+
+      return;
+    }
+  },
 	[TYPES.PUSH_ONLY_MESSAGE](state, message) {
-		state.messages.push(message);
+    if (message.name !== '' && Array.isArray(message.text) === true) {
+      state.messages.push(message);
+    }    
 	},
 	[TYPES.PUSH_CUSTOMER_INFO](state, data) {
 		state.customer.name = data.name;
