@@ -20,13 +20,13 @@
         >
           <chat
             :label="message.label"
-            :sent="message.sent"
+            :side="message.side"
             :text-color="message.textColor"
             :bg-color="message.bgColor"
             :name="message.name"
             :avatar="message.avatar"
             :text="message.text"
-            :stamp="message.stamp"
+            :status="message.status"
             class="animate-scale"
           >
           </chat>
