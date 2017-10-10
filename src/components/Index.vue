@@ -6,7 +6,6 @@
 
 <script>
 import SChat from '../modules/chat/ChatMessage';
-
 import { QLayout } from 'quasar';
 
 export default {
