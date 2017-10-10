@@ -9,9 +9,6 @@ export default {
   opened() {
     return this.$store.state.chat.opened;
   },
-  messages() { 
-    return this.$store.state.chat.messages;
-  },
   message: {
     get() {
       return this.$store.state.chat.message;
