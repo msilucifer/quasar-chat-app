@@ -2,39 +2,44 @@
   <div
     class="q-message-stamp animate-scale"
   >
-    {{ options.stamp }}
+    {{ props.status.stamp }}
     <i
       aria-hidden="false"
-      class="q-icon material-icons text-white stamp"
+      class="q-icon material-icons stamp"
+      :class="classes"
     >
-    {{ icon }}
+    {{ messageStatus }}
     </i>
-    {{ wasItSent }}
+    <pre>
+      {{ props }}
+    </pre>
   </div>
 </template>
 
 <script>
 export default {
   name: 'chatStamp',
-  props: ['options'],
+  props: ['props'],
   data() {
     return {
-      icon: ''
+      classes: {
+        'text-white': true,
+        'text-grey': true
+      }
     };
   },
   computed: {
-    wasItSent() {
-      if (1 > 0) {
-        this.icon = 'done';
-        
-        return;
-      }
-    },
-    wasItSeen() {
+    messageStatus() {
+      const status = this.props.status;
+      if (status.sent === false) return 'access_time';
 
-    },
-    wasItDelivered() {
-      
+      if (status.sent === true && status.delivered === false) return 'done';
+
+      if (status.sent === true && status.delivered === true) return 'done_all';
+
+      if (status.sent === true && status.delivered === true && status.seen == true) {
+        this.classes = { 'text-green': true, 'animate-scale': true };
+      }
     }
   }
 }
