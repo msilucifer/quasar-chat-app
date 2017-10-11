@@ -1,9 +1,7 @@
 import * as TYPES from './mutation-types';
 
-export const pushMessage = ({ commit, state, dispatch }, message) => {
-	commit('PUSH_ONLY_MESSAGE');
-};
-
-export const readMessage = ({ state, commit }, payload) => {
-	commit({ type: 'READ_MESSAGE', payload });
+export const resolveQueuedMessages = ({ commit, state }, messageId) => {
+  setTimeout(() => {
+    commit('RESOLVE_QUEUED_MESSAGES', messageId);
+  }, 600);
 };
