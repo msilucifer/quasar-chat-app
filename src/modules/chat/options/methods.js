@@ -99,8 +99,6 @@ export const methods = {
         easing: 'ease-in',
         cancelable: false
       });
-      
-      this.message = '';
     }
 
     this.$refs.message.focus(); 
