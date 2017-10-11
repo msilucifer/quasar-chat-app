@@ -24,11 +24,29 @@ function isMessageAlreadyQueued() {
   )));
 }
 
+function interval(online, offline) {
+  if (typeof online === 'number' && typeof offline === 'number') {
+    if (navigator.onLine) return online;
+    else return offline;
+  }
+
+  return 500;
+}
+
 export default {
+  [TYPES.RESOLVE_QUEUED_MESSAGES](state, messageId) {    
+    setInterval(() => {
+      state.toBeRead.find((e, i) => {
+        console.log(e, i);  
+      });
+    }, interval(280, 2000));
+  },
   [TYPES.QUEUE_UNREAD_MESSAGES](state, messages){
-     messages.forEach(function(message) {
-       if (message.info.sent === false) state.toBeRead.push(message);
-    }, this);
+    setInterval(() => {
+      messages.forEach(function(message) {
+        if (message.info.sent === false) state.toBeRead.push(message);
+      }, this);
+    }, interval(300, 1200));
   },
   [TYPES.PUSH_WELCOME_MESSAGE](state, welcomeMessage) {
     if (state.welcomeMessage === false) {
