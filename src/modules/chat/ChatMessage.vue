@@ -19,6 +19,7 @@
           :key="id"
         >
           <chat
+            :id="message.id"
             :label="message.label"
             :side="message.side"
             :text-color="message.textColor"
@@ -153,6 +154,10 @@
     data,
     methods,
     computed,
+    created() {
+      this.$store.commit('chat/QUEUE_UNREAD_MESSAGES', this.messages);
+      this.resolveQueuedMessages();
+    },
     mixins: [ validationMixin ],
     validations: {
       email: {
