@@ -10,9 +10,6 @@
     >
     {{ messageStatus }}
     </i>
-    <pre>
-      {{ props }}
-    </pre>
   </div>
 </template>
 
