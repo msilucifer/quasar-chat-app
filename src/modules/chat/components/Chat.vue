@@ -21,7 +21,7 @@
         >
           <span class="q-message-text-content" :class="textClass">
             <p>{{ msg }}</p>
-            <chat-stamp :props="{ status }" />
+            <chat-stamp :props="{ status, id }" />
           </span>
         </div>
       </div>
