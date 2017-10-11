@@ -2,6 +2,7 @@
 
 export default () => {
   return {
+    id: undefined,
     chatStatus: true,
     popup: false,
     isInputHided: true,
