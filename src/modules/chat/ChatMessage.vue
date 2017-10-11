@@ -34,7 +34,7 @@
         <chat-spinner v-if="isSupportTyping" />
         <div
           class="inputs"
-          v-if="messages.length <= 1"
+          v-if="messages.length === 0"
         >
           <small class="caption">About you</small>
           <q-field>
