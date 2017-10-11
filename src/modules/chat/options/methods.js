@@ -71,7 +71,6 @@ export const methods = {
           delivered: false
         }
       });
-      this.$store.commit('chat/QUEUE_UNREAD_MESSAGES', this.messages);
       this.$store.commit('chat/IS_SUPPORT_TYPING');
       setTimeout(() => {
         this.$store.commit('chat/PUSH_ONLY_MESSAGE',{
@@ -102,7 +101,7 @@ export const methods = {
         cancelable: false
       });
     }
-    // this.id = undefined;
+    
     this.$refs.message.focus(); 
   },
   openPopupStatus() {
@@ -110,9 +109,6 @@ export const methods = {
   },
   closePopupStatus() {
     this.popup = false;
-  },
-  handlers(event, payload) {
-    console.log(event, payload);
   },
   generateUId() {
     return (Date.now() + Math.random().toString(36).substr(2, 100)).toString(36);
@@ -146,7 +142,7 @@ export const methods = {
     return time;
   },
   ...mapActions({ 
-    send: 'PUSH_ONLY_MESSAGE'
+    resolveQueuedMessages: 'chat/resolveQueuedMessages'
   })
 };
 
