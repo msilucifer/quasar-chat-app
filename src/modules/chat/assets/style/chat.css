@@ -88,6 +88,14 @@
   margin:16px;
 }
 
+.q-message-received .q-message-text {
+  border-radius: 12px 12px 12px 0 !important;
+}
+
+.q-message-sent .q-message-text {
+  border-radius: 12px 12px 0 12px !important;
+}
+
 @media (max-width: 768px) {
   #chat {
     margin: 0;
