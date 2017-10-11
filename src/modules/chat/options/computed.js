@@ -47,6 +47,13 @@ export default {
   isClientTyping() {
     return this.$store.state.chat.isTyping.client;
   },
+  getHour() {
+    const d = new Date();
+    let h = this.fixZero(d.getHours());
+    let m = this.fixZero(d.getMinutes());
+
+    return h + 'h' + m;
+  },
   ...mapState({
     messages: state => state.chat.messages
   })
