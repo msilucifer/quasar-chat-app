@@ -3,20 +3,28 @@
     class="q-message-stamp animate-scale"
   >
     {{ props.status.stamp }}
-    <i
+    <i 
+      v-if="props.status.type === 'client'"    
       aria-hidden="false"
       class="q-icon material-icons stamp"
       :class="classes"
     >
     {{ messageStatus }}
     </i>
+    <q-tooltip self="top right" achor="bottom right" :delay="500">
+      Sent at: {{ props.status.stamp }} | Seen at: {{ props.status.stamp }}
+    </q-tooltip>
   </div>
 </template>
 
 <script>
+import { QTooltip } from 'quasar' ;
 export default {
   name: 'chatStamp',
   props: ['props'],
+  components: {
+    QTooltip
+  },
   data() {
     return {
       classes: {
@@ -28,13 +36,13 @@ export default {
   computed: {
     messageStatus() {
       const status = this.props.status;
-      if (status.sent === false) return 'access_time';
+      if (status.sent.state === false) return 'access_time';
 
-      if (status.sent === true && status.delivered === false) return 'done';
+      if (status.sent.state === true && status.delivered.state === false) return 'done';
 
-      if (status.sent === true && status.delivered === true) return 'done_all';
+      if (status.sent.state === true && status.delivered.state === true) return 'done_all';
 
-      if (status.sent === true && status.delivered === true && status.seen == true) {
+      if (status.sent.state === true && status.delivered.state === true && status.seen.state == true) {
         this.classes = { 'text-green': true, 'animate-scale': true };
       }
     }
