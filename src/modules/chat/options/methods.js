@@ -46,6 +46,14 @@ export const methods = {
     this.$store.commit('chat/NOTIFY_CLIENT_IS_TYPING');
   },
   submit() {
+    function getHour(fixZero) {
+      const d = new Date();
+      const h = fixZero(d.getHours());
+      const m = fixZero(d.getMinutes());
+  
+      return h + 'h' + m;
+    }
+
     this.id = this.generateUId();
     if (this.$q.platform.is.mobile) {
       this.$scrollTo('#message', 600, {
@@ -59,32 +67,50 @@ export const methods = {
     if (this.name && this.email && this.phone && this.message.replace(/\n/gi, '')) {
       this.$store.commit('chat/PUSH_ONLY_MESSAGE', {
         id: this.id,
-        name: 'You',
+        name: this.name,
         text: [this.message],
         avatar: '../../statics/me.png',
         side: true,
         info: {
-          type: 1,
-          stamp: this.getHour,
-          sent: false,
-          seen: false,
-          delivered: false
+          type: 'client',
+          stamp: getHour(this.fixZero),
+          sent: {
+            state: false,
+            at: null
+          },
+          seen: {
+            state: false,
+            at: null
+          },
+          delivered: {
+            state: false,
+            at: null
+          }
         }
       });
       this.$store.commit('chat/IS_SUPPORT_TYPING');
       setTimeout(() => {
         this.$store.commit('chat/PUSH_ONLY_MESSAGE',{
           id: this.id + 'oi',
-          name: 'SatTrack',
+          name: this.support.name,
           text: ['Hey, we\'re gonna e-mail you or send a message to you soon, then stick around!'],
-          avatar: '../../statics/me.png',
+          avatar: this.support.src,
           side: false,
           info: {
-            type: 0,
-            stamp: this.getHour,
-            sent: false,
-            seen: false,
-            delivered: false
+            type: 'support',
+            stamp: getHour(this.fixZero),
+            sent: {
+              state: true,
+              at: null
+            },
+            seen: {
+              state: false,
+              at: null
+            },
+            delivered: {
+              state: true,
+              at: null
+            }
           },
           bgColor: 'primary',
           textColor: 'white'
