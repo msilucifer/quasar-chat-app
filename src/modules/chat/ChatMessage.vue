@@ -32,10 +32,10 @@
           >
           </chat>
         </div>
-        <chat-spinner v-if="isSupportTyping" />
+        <chat-spinner v-if="isSupportTyping" :avatar="this.support.src"/>
         <div
           class="inputs"
-          v-if="messages.length === 0"
+          v-if="messages.length <= 1"
         >
           <small class="caption">About you</small>
           <q-field>
@@ -152,10 +152,50 @@
     name: 's-chat',
     components,
     data,
+    props: {
+      support: {
+        type: Object,
+        required: true
+      }
+    },
     methods,
     computed,
     created() {
-      this.$store.commit('chat/QUEUE_UNREAD_MESSAGES', this.messages);
+      const id = this.generateUId();
+
+      function getHour(fixZero) {
+        const d = new Date();
+        const h = fixZero(d.getHours());
+        const m = fixZero(d.getMinutes());
+    
+        return h + 'h' + m;
+      }
+
+      this.$store.commit('chat/PUSH_WELCOME_MESSAGE', {
+        text: this.support.message,
+        id: id,
+        avatar: this.support.src,
+          side: false,
+          info: {
+            type: 'support',
+            stamp: getHour(this.fixZero),
+            sent: {
+              state: true,
+              at: null
+            },
+            seen: {
+              state: false,
+              at: null
+            },
+            delivered: {
+              state: true,
+              at: null
+            }
+          },
+          bgColor: 'primary',
+          textColor: 'white'
+      });
+      this.$store.commit('chat/QUEUE_UNSENT_MESSAGES');
       this.resolveQueuedMessages();
     },
     mixins: [ validationMixin ],
