@@ -8,7 +8,7 @@ function isMessageValid (message) {
     if (message.text === undefined || message.text === '' || message.text === ' ') return false;
     if (Array.isArray(message.text) === false || message.text.length === 0) return false;
     if (message.name === '' || message.name === undefined) return false;
-    if (message.info.type === undefined || typeof message.info.type !== 'number') return false;
+    if (message.info.type === undefined || typeof message.info.type !== 'string') return false;
 
     return true;
   }
@@ -33,20 +33,32 @@ function interval(online, offline) {
   return 500;
 }
 
+function getClientMessages(message) {
+  return message.info.type === 'client';
+}
+
+function getUnsentMessages(message) {
+  return message.info.sent.state === false;
+}
+
+function sendUnsentMessages(message) {
+  message.info.sent.state = true;
+  message.info.sent.at = Date.now();
+}
+
+function mutateSeenMessageState(message) {
+  message.info.seen.state = true;
+  message.info.seen.at = Date.now();
+}
+
 export default {
-  [TYPES.RESOLVE_QUEUED_MESSAGES](state, messageId) {    
+  [TYPES.SEND_MESSAGES](state) {    
     setInterval(() => {
-      state.toBeRead.find((e, i) => {
-        console.log(e, i);  
-      });
-    }, interval(280, 2000));
-  },
-  [TYPES.QUEUE_UNREAD_MESSAGES](state, messages){
-    setInterval(() => {
-      messages.forEach(function(message) {
-        if (message.info.sent === false) state.toBeRead.push(message);
-      }, this);
-    }, interval(300, 1200));
+      state.messages
+      .filter(getUnsentMessages)
+      .filter(getClientMessages)
+      .map(sendUnsentMessages);
+    }, interval(2000, 2000));
   },
   [TYPES.PUSH_WELCOME_MESSAGE](state, welcomeMessage) {
     if (state.welcomeMessage === false) {
@@ -102,15 +114,5 @@ export default {
 		setTimeout(() => {
 			state.isTyping.client = false;
 		}, 1600);
-	},
-	[TYPES.SEND_OVER_HTTP](state, payload) {
-		axios.get(`http://localhost:3000/`)
-		.then(response => {
-			// JSON responses are automatically parsed.
-			console.log(response, 'r');
-		})
-		.catch(e => {
-			console.log(e);
-		});
 	}
 };
