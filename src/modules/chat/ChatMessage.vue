@@ -195,7 +195,6 @@
           bgColor: 'primary',
           textColor: 'white'
       });
-      this.$store.commit('chat/QUEUE_UNSENT_MESSAGES');
       this.resolveQueuedMessages();
     },
     mixins: [ validationMixin ],
