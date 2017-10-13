@@ -1,6 +1,6 @@
 <template>
   <div id="body">
-    <s-chat slot="chat"></s-chat>
+    <s-chat :support="support" slot="chat"></s-chat>
   </div>
 </template>
 
@@ -9,7 +9,16 @@ import SChat from '../modules/chat/ChatMessage';
 import { QLayout } from 'quasar';
 
 export default {
-  components: { SChat, QLayout }
+  components: { SChat, QLayout },
+  data() {
+    return {
+      support: {
+        name: 'Daniel Piva',
+        src: 'https://avatars3.githubusercontent.com/u/26178791',
+        message: ['Hi, there! What can I help with?']
+      }
+    }
+  }
 }
 </script>
 
