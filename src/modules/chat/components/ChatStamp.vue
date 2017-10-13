@@ -11,8 +11,8 @@
     >
     {{ messageStatus }}
     </i>
-    <q-tooltip self="top right" achor="bottom right" :delay="500">
-      Sent at: {{ props.status.stamp }} | Seen at: {{ props.status.stamp }}
+    <q-tooltip self="top left" anchor="bottom left" :delay="500">
+      <span>Seen at: {{ props.status.stamp }}</span>
     </q-tooltip>
   </div>
 </template>
