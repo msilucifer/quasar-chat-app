@@ -1,7 +1,7 @@
 import * as TYPES from './mutation-types';
 
-export const resolveQueuedMessages = ({ commit, state }, messageId) => {
+export const resolveQueuedMessages = ({ commit, state }) => {
   setTimeout(() => {
-    commit('RESOLVE_QUEUED_MESSAGES', messageId);
+    commit('RESOLVE_QUEUED_MESSAGES');
   }, 600);
 };
