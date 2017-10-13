@@ -16,6 +16,7 @@ export default {
   props: {
     avatar: {
       type: String,
+      required: true,
       default: 'statics/me.png'
     },
     classes: Object,
