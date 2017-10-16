@@ -37,6 +37,7 @@ export const methods = {
   open() {
     this.elmsState.chatBtn.icon.name = 'close';
     this.$store.commit('chat/OPEN_CHAT');
+    this.visualizeMessage();
   },
   close() {
     this.elmsState.chatBtn.icon.name = 'chat';
@@ -44,6 +45,9 @@ export const methods = {
   },
   notifyClientIsTyping() {
     this.$store.commit('chat/NOTIFY_CLIENT_IS_TYPING');
+  },
+  visualizeMessage() {
+    this.$store.commit('chat/VISUALIZE_MESSAGE');
   },
   submit() {
     function getHour(fixZero) {
@@ -168,7 +172,8 @@ export const methods = {
     return time;
   },
   ...mapActions({ 
-    resolveQueuedMessages: 'chat/resolveQueuedMessages'
+    resolveQueuedMessages: 'chat/resolveQueuedMessages',
+    deliverMessage: 'chat/deliverMessage'
   })
 };
 
