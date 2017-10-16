@@ -36,14 +36,16 @@ export default {
   computed: {
     messageStatus() {
       const status = this.props.status;
+      
       if (status.sent.state === false) return 'access_time';
 
       if (status.sent.state === true && status.delivered.state === false) return 'done';
 
-      if (status.sent.state === true && status.delivered.state === true) return 'done_all';
+      if (status.sent.state === true && status.seen.state == false && status.delivered.state === true) return 'done_all';
 
       if (status.sent.state === true && status.delivered.state === true && status.seen.state == true) {
-        this.classes = { 'text-green': true, 'animate-scale': true };
+        this.classes = { 'text-green': true, 'animate-scale': true }
+        return 'done_all';
       }
     }
   }
