@@ -87,7 +87,8 @@
             class="message-input"
             v-model="message"
             float-label="What's your message?"
-            @input="notifyClientIsTyping()"
+            @input="notifyClientIsTyping(), visualizeMessage()"
+            @focus="visualizeMessage()"
             @keyup.enter="submit()"
             :after="[{ icon: 'send', handler() { submit() } }]"
           />
@@ -196,6 +197,7 @@
           textColor: 'white'
       });
       this.resolveQueuedMessages();
+      this.deliverMessage();
     },
     mixins: [ validationMixin ],
     validations: {
