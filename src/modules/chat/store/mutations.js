@@ -4,7 +4,7 @@ import { state } from './state';
 function isMessageValid (message) {
   if (!message) return false;
   if (typeof message === 'object') {
-    if (message.id === undefined || typeof message.id === 'undefined' || message.id === undefined) return false;
+    if (message.id === undefined || typeof message.id === 'undefined') return false;
     if (message.text === undefined || message.text === '' || message.text === ' ') return false;
     if (Array.isArray(message.text) === false || message.text.length === 0) return false;
     if (message.name === '' || message.name === undefined) return false;
@@ -14,14 +14,6 @@ function isMessageValid (message) {
   }
 
   return false;
-}
-
-function isMessageAlreadyQueued() {
-  let arr = [...arguments]
-    
-  return arr.shift().filter( y => arr.every(
-    x => x.some( j => j.id !== y.id
-  )));
 }
 
 function interval(online, offline) {
