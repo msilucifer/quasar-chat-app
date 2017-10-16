@@ -5,3 +5,9 @@ export const resolveQueuedMessages = ({ commit, state }) => {
     commit('SEND_MESSAGES');
   }, 600);
 };
+
+export const deliverMessage = ({ commit, state }) => {
+  setTimeout(() => {
+    commit('DELIVER_MESSAGES');
+  });
+};
