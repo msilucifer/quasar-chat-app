@@ -41,9 +41,18 @@ function getUnsentMessages(message) {
   return message.info.sent.state === false;
 }
 
-function getUnseenMessages(){
+function getUnseenMessages(message) {
   return message.info.seen.state === false;
-} 
+}
+
+function getNotDeliveredMessages(message) {
+  return message.info.delivered.state === false;
+}
+
+function mockForDeliveredMessages(message) {
+  message.info.delivered.state = true;
+  message.info.delivered.at = Date.now();
+}
 
 function sendUnsentMessages(message) {
   message.info.sent.state = true;
@@ -68,7 +77,15 @@ export default {
     state.messages
     .filter(getClientMessages)
     .filter(getUnseenMessages)
-    .map(visualizeUnseenMessages)
+    .map(visualizeUnseenMessages);
+  },
+  [TYPES.DELIVER_MESSAGES](state){
+    setInterval(() => {
+      state.messages
+      .filter(getClientMessages)
+      .filter(getNotDeliveredMessages)
+      .map(mockForDeliveredMessages);
+    }, 3000);
   },
   [TYPES.PUSH_WELCOME_MESSAGE](state, welcomeMessage) {
     if (state.welcomeMessage === false) {
