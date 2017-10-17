@@ -14,7 +14,7 @@ import Vue from 'vue';
 import Quasar from 'quasar';
 import router from './router';
 
-import store  from './modules/store';
+import store  from './store';
 
 Vue.config.productionTip = false;
 
