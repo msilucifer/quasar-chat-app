@@ -24,7 +24,7 @@ $ quasar lint
 
 {
   id: String,
-  name: String
+  name: String,
   text: Array,
   avatar: String,
   side: Boolean,
